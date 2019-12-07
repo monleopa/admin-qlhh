@@ -22,10 +22,6 @@ export default class Item extends Component {
       SupplierID: 0,
       CategoriesList: [
         {
-          categoryID: 0,
-          categoryName: "None"
-        },
-        {
           categoryID: 1,
           categoryName: "Shirt"
         },
@@ -35,6 +31,10 @@ export default class Item extends Component {
         },
         {
           categoryID: 3,
+          categoryName: "Dress"
+        },
+        {
+          categoryID: 4,
           categoryName: "Coat"
         },
       ],
@@ -70,14 +70,49 @@ export default class Item extends Component {
 
   componentDidMount = () => {
     Axios.get(API.listitem).then(res => {
-      if (res.data) {
-        this.setState({
-          Items: res.data
-        })
+      if (res.status === 200) {
+        if (res.data.success) {
+          this.setState({
+            Items: res.data.data
+          })
+        }
       }
     });
     this.setState({
       isLoaded: true
+    })
+
+    Axios.get(API.category).then(res => {
+      if (res.status === 200) {
+        if (res.data.success) {
+          this.setState({
+            CategoriesList: res.data.data,
+            CategoryID: res.data.data[0].categoryID,
+            CategoryName: res.data.data[0].categoryName
+          })
+        }
+      } else {
+        this.setState({
+          isLoaded: true
+        })
+      }
+
+    })
+
+    Axios.get(API.supplier).then(res => {
+      if (res.status === 200) {
+        if (res.data.success) {
+          this.setState({
+            SuppliersList: res.data.data,
+            SupplierID: res.data.data[0].supplierID
+          })
+        }
+      } else {
+        this.setState({
+          isLoaded: true
+        })
+      }
+
     })
   }
 
@@ -91,6 +126,25 @@ export default class Item extends Component {
 
   handleChange = (e) => {
     this.setState({ [e.target.name]: e.target.value })
+    var value = e.target.value;
+    if (e.target.name == "CategoryID") {
+      var a = this.state.CategoriesList.filter(function (e) {
+        return e.categoryID == value
+      });
+
+      this.setState({
+        CategoryName: a[0].categoryName,
+      })
+    }
+    if (e.target.name == "SupplierID") {
+      var a = this.state.SuppliersList.filter(function (e) {
+        return e.supplierID == value
+      });
+
+      this.setState({
+        SupplierName: a[0].supplierName,
+      })
+    }
   }
 
   deleteDetail = (Size) => {
@@ -114,7 +168,12 @@ export default class Item extends Component {
     let quanNum = parseInt(Quantity);
 
     if (!quanNum) {
-      alert('Quantity must be a numver');
+      alert('Quantity must be a number');
+      return;
+    }
+
+    if (!Size) {
+      alert('Size not null');
       return;
     }
 
@@ -146,42 +205,71 @@ export default class Item extends Component {
 
   addItem = (e) => {
     e.preventDefault();
-    let { Items, ItemCode, ItemDetails, ItemName, ItemPrice, ItemImage, CategoryID, SupplierID } = this.state;
+    let { Items, ItemCode, SupplierName, ItemDetails, ItemName, ItemPrice, ItemImage, CategoryID, SupplierID, CategoryName, Description } = this.state;
+
+    var data = {
+      ItemName: ItemName,
+      ItemCode: ItemCode,
+      Price: ItemPrice,
+      ItemImage: ItemImage,
+      CategoryID: CategoryID,
+      SupplierID: SupplierID,
+      ListItemDetail: ItemDetails,
+      Description: Description,
+    }
+
+    console.log(data);
+
 
     if (ItemDetails.length == 0) {
-      this.setState({warnning: "You must add at least one item detail"})
+      this.setState({ warnning: "You must add at least one item detail" })
       return;
     }
 
-    Items.push({
-      itemCode: ItemCode,
-      itemName: ItemName,
-      itemDetails: ItemDetails,
-      itemPrice: ItemPrice,
-      categoryID: CategoryID,
-      supplierID: SupplierID,
-      itemImage: ItemImage
-    });
+    Axios.post(API.addItem, data).then(res => {
+      if (res.status === 200) {
+        if (res.data.success) {
+          Items.push({
+            itemID: res.data.data,
+            itemCode: ItemCode,
+            itemName: ItemName,
+            itemDetails: ItemDetails,
+            price: ItemPrice,
+            categoryID: CategoryID,
+            supplierID: SupplierID,
+            itemImage: ItemImage,
+            categoryName: CategoryName,
+            supplierName: SupplierName
+          });
 
-    this.setState({
-      isAdding: false,
-      ItemName: "",
-      ItemCode: "",
-      ItemImage: "",
-      CategoryID: 0,
-      ItemPrice: 0,
-      SupplierID: 0,
-      ItemDetails: [],
-      warnning: null
-    })
+          var supplierIDnew = this.state.SuppliersList[0].supplierID;
+          var categoryIDnew = this.state.CategoriesList[0].categoryID;
+
+          this.setState({
+            isAdding: false,
+            ItemName: "",
+            ItemCode: "",
+            ItemImage: "",
+            CategoryID: categoryIDnew,
+            ItemPrice: 0,
+            SupplierID: supplierIDnew,
+            ItemDetails: [],
+            warnning: null
+          })
+        }
+      }
+    });
   }
 
   render() {
     const { Items, isLoaded, isAdding, CategoriesList, SuppliersList, ItemDetails, warnning } = this.state
 
-
     const displayListCategories = CategoriesList.map(cat => (
       <option key={cat.categoryID} label={cat.categoryName} >{cat.categoryID}</option>
+    ))
+
+    const displayListSuppliers = SuppliersList.map(sup => (
+      <option key={sup.supplierID} label={sup.supplierName} >{sup.supplierID}</option>
     ))
 
     if (!isLoaded) {
@@ -194,12 +282,8 @@ export default class Item extends Component {
         <ItemDetail key={detail.Size} detail={detail} deleteDetail={this.deleteDetail} />
       ))
 
-      const displayListSuppliers = SuppliersList.map(sup => (
-        <option key={sup.supplierID} label={sup.supplierName} >{sup.supplierID}</option>
-      ))
-
       return (
-        <div className="container main">
+        <div className="container main dialog-item">
           <form onSubmit={this.addItem}>
             <h5>Add item</h5>
             {warnning ? <p className="warn">{warnning}</p> : null}
@@ -252,11 +336,11 @@ export default class Item extends Component {
                 </select>
               </div>
               <div className="form-group col-md-6">
-                <label htmlFor="SuplierID">Supplier:</label>
+                <label htmlFor="SupplierID">Branch:</label>
                 <select
                   className="form-control"
-                  id="SuplierID"
-                  name="SuplierID"
+                  id="SupplierID"
+                  name="SupplierID"
                   onChange={this.handleChange}
                   value={this.state.SupplierID}
                 >
@@ -267,6 +351,10 @@ export default class Item extends Component {
             <div className="form-group">
               <label htmlFor="ItemImage">Item Image:</label>
               <input type="text" className="form-control" id="ItemImage" name="ItemImage" onChange={this.handleChange} required />
+            </div>
+            <div className="form-group">
+              <label htmlFor="ItemImage">Description:</label>
+              <input type="text" className="form-control" id="Description" name="Description" onChange={this.handleChange} />
             </div>
             <p>Detail</p>
             <div className="row">
@@ -317,15 +405,23 @@ export default class Item extends Component {
 
     const displayList = Items.map(item => (
       <tr key={item.itemID}>
-        <td>{item.itemImage}</td>
-        <td>{item.itemCode}</td>
-        <td>{item.itemName}</td>
-        <td>{item.itemPrice}</td>
-        <td>{item.categoryID}</td>
-        <td>{item.supplierID}</td>
+        <td><div
+          className='image'
+          style={{
+            backgroundImage: `url(${item.itemImage})`
+          }}
+        />
+        </td>
+        <td><span className="center-vertical">{item.itemCode}</span></td>
+        <td><span className="center-vertical">{item.itemName}</span></td>
+        <td><span className="center-vertical">{item.price}$</span></td>
+        <td><span className="center-vertical">{item.categoryName}</span></td>
+        <td><span className="center-vertical">{item.supplierName}</span></td>
         <td>
-          <span className="fix-size"><i className="far fa-edit btn-edit"></i></span>
-          <span className="fix-size"><i className="fas fa-trash-alt btn-delete"></i></span>
+          <span className="center-vertical">
+            <span className="fix-size"><i className="far fa-edit btn-edit"></i></span>
+            <span className="fix-size"><i className="fas fa-trash-alt btn-delete"></i></span>
+          </span>
         </td>
       </tr>
     ))
@@ -333,7 +429,6 @@ export default class Item extends Component {
     return (
       <div className="container main">
         <h4>ITEM MANAGEMENT</h4>
-        <br />
 
         <div className="row">
           <form className="input-group mb-3 col-sm-11" onSubmit={this.search}>
@@ -346,26 +441,34 @@ export default class Item extends Component {
             <button className="btn btn-primary add" onClick={this.showAdding}>+</button>
           </div>
         </div>
-        <br />
 
-        <div className="form-group">
-          <label htmlFor="ShowCategory">Category:</label>
-          <select className="form-control" id="ShowCategory" name="ShowCategory" onChange={this.handleChange} >
-            {displayListCategories}
-          </select>
+        <div className="row">
+          <div className="col-md-6 d-flex">
+            <div className="form-group">
+              <label htmlFor="ShowCategory">Category:</label>
+              <select className="form-control" id="ShowCategory" name="ShowCategory" onChange={this.handleChange} >
+                {displayListCategories}
+              </select>
+            </div>
+            <div className="form-group margin-left-20">
+              <label htmlFor="showBranch">Branch:</label>
+              <select className="form-control" id="showBranch" name="showBranch" onChange={this.handleChange} >
+                {displayListSuppliers}
+              </select>
+            </div>
+          </div>
         </div>
-
         <h5>List Item</h5>
-        <table className="table table-category">
+        <table className="table table-item">
           <thead>
             <tr>
-              <th>Image</th>
+              <th className="row-img">Image</th>
               <th>Code</th>
               <th>Item Name</th>
               <th>Price</th>
               <th>Category</th>
-              <th>Supplier</th>
-              <th></th>
+              <th className="row-supplier">Supplier</th>
+              <th className="row-other"></th>
             </tr>
           </thead>
           <tbody>

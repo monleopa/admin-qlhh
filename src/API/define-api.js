@@ -1,9 +1,14 @@
-var APILink = "http://192.168.1.12:55244/api/"
+var APILink = "http://localhost:55244/api/"
 
 var API = {
   login: APILink + "admin/login",
   listitem: APILink + "item",
   category: APILink + "item/category",
+  supplier: APILink + "item/supplier",
+  addCategory: APILink + "admin/category",
+  salecode: APILink + "item/salecode",
+  addSalecode: APILink + "admin/salecode",
+  addItem: APILink + "admin/item",
 }
 
 export default API

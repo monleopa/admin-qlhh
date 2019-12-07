@@ -1,7 +1,3 @@
-.main {
-  padding-top: 30px;
-}
-
 h4 {
   font-weight: bold;
 }
@@ -25,10 +21,49 @@ h4 {
   color: rgb(24, 21, 240);
 }
 
+.btn-edit:hover {
+  color: rgb(17, 15, 160);
+}
+
 .btn-delete {
   color: rgb(240, 21, 21);
 }
 
+.btn-delete:hover {
+  color: rgb(155, 5, 5);
+}
+
 .btn-add {
   margin-right: 10px;
+}
+
+.abs-class {
+  position: absolute;
+  background: #ccc;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  opacity: 0.5;
+  z-index: 1;
+}
+
+.dialog-category {
+  background: #fff;
+  border-radius: 3px;
+  position: absolute;
+  top: 20%;
+  margin: 0 auto;
+  z-index: 2;
+  padding: 30px 50px;
+  left: 25%;
+  right: 25%;
+}
+
+.z-index-0 {
+  z-index: 0 !important;
+}
+
+.input-group-append button {
+  height: 38px;
 }

@@ -9,6 +9,8 @@ var API = {
   salecode: APILink + "item/salecode",
   addSalecode: APILink + "admin/salecode",
   addItem: APILink + "admin/item",
+  addStaff: APILink + "admin/staff",
+  getStaff: APILink + "admin/staff",
 }
 
 export default API

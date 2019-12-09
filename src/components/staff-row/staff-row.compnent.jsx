@@ -13,7 +13,7 @@ export default class StaffRow extends Component {
         <td>{staff.firstName + " " + staff.lastName}</td>
         <td>{staff.username}</td>
         <td>{staff.mobile}</td>
-        <td>{staff.staffType.staffTypeName}</td>
+        <td>{staff.staffTypeName}</td>
         <td>
           <span className="fix-size"><i className="far fa-edit btn-edit"></i></span>
           <span className="fix-size"><i className="fas fa-trash-alt btn-delete" onClick={this.deleteStaff}></i></span>

@@ -1,5 +1,9 @@
 import React, { Component } from 'react'
 import StaffRow from '../staff-row/staff-row.compnent'
+import './staff.styles.scss'
+import '../../API/common.js'
+import Axios from 'axios'
+import API from '../../API/define-api'
 
 export default class Staff extends Component {
   constructor() {
@@ -7,8 +11,8 @@ export default class Staff extends Component {
 
     this.state = {
       isLoaded: false,
-
       Staffs: [],
+      StaffID: "",
       FirstName: "",
       LastName: "",
       Address: "",
@@ -16,15 +20,14 @@ export default class Staff extends Component {
       Username: "",
       Password: "",
       StaffCode: "",
-      StaffTypeID: 0,
+      StaffTypeID: "",
       StaffID: "",
       isAdding: false,
       warnning: null,
-
       ListStaffTypes: [
         {
           staffTypeID: 0,
-          staffTypeName: "None"
+          staffTypeName: "All"
         },
         {
           staffTypeID: 1,
@@ -32,10 +35,9 @@ export default class Staff extends Component {
         },
         {
           staffTypeID: 2,
-          staffTypeName: "Not A Shipper"
+          staffTypeName: "Managerment Item"
         },
       ],
-
       ShowStaffTypeID: 0,
     }
   }
@@ -50,6 +52,15 @@ export default class Staff extends Component {
 
   componentDidMount = () => {
     this.setState({ isLoaded: true })
+    Axios.get(API.getStaff).then(res => {
+      if(res.status === 200) {
+        if(res.data.success) {
+          this.setState({
+            Staffs: res.data.data
+          })
+        }
+      }
+    });
   }
 
   deleteStaff = (staffCode) => {
@@ -63,6 +74,21 @@ export default class Staff extends Component {
     console.log(newStaffs)
 
     this.setState({ Staffs: newStaffs })
+  }
+
+  randomGuidElm = () => {
+    return Math.floor((1 + Math.random())  * 0x10000).toString(16).substring(1);
+  }
+
+  newGuid = () => {
+    var ele1 = this.randomGuidElm();
+    var ele2 = this.randomGuidElm();
+    var ele3 = this.randomGuidElm();
+    var ele4 = this.randomGuidElm();
+    var ele5 = this.randomGuidElm();
+    var ele6 = this.randomGuidElm();
+    var ele7 = this.randomGuidElm();
+    return ele1 + ele2 + '-' + ele3 + '-' + ele4 + '-' + ele5 + ele6 + ele7;
   }
 
   handleChange = (e) => {
@@ -82,30 +108,53 @@ export default class Staff extends Component {
       }
     })
 
-    Staffs.push({
-      staffCode: StaffCode,
-      firstName: FirstName,
-      lastName: LastName,
-      username: Username,
-      password: Password,
-      mobile: Mobile,
-      address: Address,
-      staffType: saveStaffType,
-      staffCode: StaffCode
-    })
+    var data = {
+      FirstName: FirstName,
+      LastName: LastName,
+      Mobile: Mobile,
+      Address: Address,
+      Username: Username,
+      Password: Password,
+      StaffCode: StaffCode,
+      StaffTypeID: StaffTypeID
+    }
 
-    this.setState({
-      FirstName: "",
-      LastName: "",
-      Address: "",
-      Mobile: "",
-      Username: "",
-      Password: "",
-      StaffCode: "",
-      StaffTypeID: 0,
-      StaffID: "",
-      isAdding: false,
-      warnning: null,
+    Axios.post(API.addStaff , data).then(res => {
+      if (res.status === 200) {
+        if(res.data.success) {
+          Staffs.push({
+            staffCode: StaffCode,
+            firstName: FirstName,
+            lastName: LastName,
+            username: Username,
+            password: Password,
+            mobile: Mobile,
+            address: Address,
+            staffType: saveStaffType.staffTypeID,
+            staffTypeName: saveStaffType.staffTypeName,
+            staffCode: StaffCode
+          })
+      
+          this.setState({
+            FirstName: "",
+            LastName: "",
+            Address: "",
+            Mobile: "",
+            Username: "",
+            Password: "",
+            StaffCode: "",
+            StaffTypeID: 0,
+            StaffID: "",
+            isAdding: false,
+            warnning: null,
+          });
+        } else {
+          alert("Error Server");
+          console.log(res.data)
+        }
+      } else {
+        alert("error Occurr")
+      }
     });
   }
 
@@ -125,7 +174,7 @@ export default class Staff extends Component {
     if (isAdding) {
       const { warnning, FirstName, LastName, Username, Password, Mobile, Address, StaffTypeID, StaffCode } = this.state
       return (
-        <div className="container main">
+        <div className="container main staff-dialog">
           <form onSubmit={this.addStaff}>
             <h5>Add Staff</h5>
             {warnning ? <p className="warn">{warnning}</p> : null}
@@ -179,7 +228,7 @@ export default class Staff extends Component {
               <div className="form-group col-md-6">
                 <label htmlFor="Password">Password:</label>
                 <input
-                  type="text"
+                  type="password"
                   className="form-control"
                   id="Password"
                   name="Password"
@@ -235,7 +284,7 @@ export default class Staff extends Component {
 
     return (
       <div className="container main">
-        <h4>STAFF MANAGEMENT</h4><br />
+        <h4>STAFF MANAGEMENT</h4>
 
         <div className="row">
           <form className="input-group mb-3 col-sm-11" onSubmit={this.search}>
@@ -248,7 +297,6 @@ export default class Staff extends Component {
             <button className="btn btn-primary add" onClick={this.showAdding}>+</button>
           </div>
         </div>
-        <br />
 
         <div className="form-group">
           <label htmlFor="ShowStaffTypeID">Staff Type:</label>

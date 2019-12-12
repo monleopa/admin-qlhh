@@ -1,0 +1,95 @@
+.table thead th {
+  vertical-align: bottom;
+  border-bottom: 2px solid #dee2e6;
+  text-align: center;
+}
+
+.table td, .table th {
+  padding: .75rem;
+  vertical-align: top;
+  border-top: 1px solid #dee2e6;
+}
+
+.price-number {
+  text-align: right;
+}
+
+.total-amount {
+  position: absolute;
+  right: 0;
+}
+
+.table-order {
+  color: #343a40;
+}
+
+.total-size {
+  font-size: 18px;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.none-padding {
+  padding: 0;
+}
+
+.fix-order-container {
+  position: fixed;
+  right: 12px;
+  top: 130px;
+}
+
+.error {
+  color: red;
+}
+
+.fix-order-container .row {
+  padding: 10px 0;
+}
+
+.icon-center {
+  text-align: center;
+  color: red;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.image {
+  width: 31%;
+  height: 117px;
+  background-size: cover;
+  background-position: center;
+  overflow: hidden;
+  margin: 0 auto;
+}
+
+.table td {
+  padding: .75rem;
+  vertical-align: inherit;
+  border-bottom: 1px solid #dee2e6;
+  border-top: none;
+}
+
+.table tfoot td {
+  border: none;
+}
+
+.set-size {
+  margin: auto;
+  cursor: pointer;
+}
+
+.quantity-size {
+  width: 75px;
+  text-align: center;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.center-vertical {
+  margin: auto;
+}

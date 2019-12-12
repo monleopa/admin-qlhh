@@ -1,0 +1,80 @@
+.Canceled {
+  color: red;
+}
+
+.cancel-order {
+  color: red;
+  cursor: pointer;
+  padding-left: 10px;
+  font-size: 20px;
+}
+
+.view-order {
+  color: #18096b;
+  cursor: pointer;
+  font-size: 20px;
+  padding-left: 10px;
+}
+
+.view-order, .cancel-order:hover {
+  cursor: pointer;
+}
+
+.reason-cancel {
+  background: #fff;
+  border-radius: 3px;
+  position: absolute;
+  top: 20%;
+  margin: 0 auto;
+  z-index: 2;
+  padding: 15px 35px;
+  left: 25%;
+  right: 25%;
+}
+
+.on-right {
+  float: right;
+}
+
+.btn-cancel-order {
+  margin-right: 10px;
+}
+
+.Canceled {
+  color: red;
+}
+
+.label {
+  padding-right: 10px;
+  margin: auto 0;
+}
+
+.text-area {
+  resize: none;
+}
+
+.row {
+  padding: 10px 0;
+}
+
+.ship-order {
+  color: #2950ff;
+  font-size: 20px;
+}
+
+.ship-order:hover {
+  cursor: pointer;
+}
+
+.done-order {
+  color: #005713;
+  font-size: 20px;
+}
+
+.done-order:hover {
+  cursor: pointer;
+}
+
+.float-right{
+  float: right;
+}

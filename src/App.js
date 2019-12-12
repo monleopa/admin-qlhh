@@ -10,6 +10,8 @@ import Item from "./components/item/item.component";
 import Category from './components/category/category.component';
 import Discount from './components/discount/discount.component';
 import Staff from './components/staff/staff.component';
+import Order from './components/order/order.component';
+import OrderDetail from './components/order-detail/order-detail.component';
 
 class App extends Component {
   constructor() {
@@ -95,6 +97,14 @@ class App extends Component {
               <Route
                 path="/discount"
                 render={(props) => <Discount />}
+              />
+              <Route
+                path="/order"
+                render={(props) => <Order />}
+              />
+              <Route
+                path="/orderdetail"
+                render={(props) => <OrderDetail match={props}/>}
               />
               <Route
                 path="/"

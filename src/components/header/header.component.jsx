@@ -29,7 +29,7 @@ export default class Header extends Component {
               <Link className="nav-link" to="/category"><b>CATEGORY</b></Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link" to="#"><b>ORDER</b></Link>
+              <Link className="nav-link" to="/order"><b>ORDER</b></Link>
             </li>
             <li className="nav-item">
               <Link className="nav-link" to="/discount"><b>DISCOUNT</b></Link>

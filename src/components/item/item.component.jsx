@@ -87,8 +87,8 @@ export default class Item extends Component {
         if (res.data.success) {
           this.setState({
             CategoriesList: res.data.data,
-            CategoryID: res.data.data[0].categoryID,
-            CategoryName: res.data.data[0].categoryName
+            CategoryID: 0,
+            CategoryName: "All"
           })
         }
       } else {
@@ -104,7 +104,8 @@ export default class Item extends Component {
         if (res.data.success) {
           this.setState({
             SuppliersList: res.data.data,
-            SupplierID: res.data.data[0].supplierID
+            SupplierID: 0,
+            SupplierName: "All",
           })
         }
       } else {
@@ -128,23 +129,59 @@ export default class Item extends Component {
     this.setState({ [e.target.name]: e.target.value })
     var value = e.target.value;
     if (e.target.name == "CategoryID") {
-      var a = this.state.CategoriesList.filter(function (e) {
-        return e.categoryID == value
-      });
+      if (value != 0) {
+        var a = this.state.CategoriesList.filter(function (e) {
+          return e.categoryID == value
+        });
 
-      this.setState({
-        CategoryName: a[0].categoryName,
-      })
+        this.setState({
+          CategoryName: a[0].categoryName,
+        })
+      } else {
+        this.setState({
+          CategoryName: "All",
+        })
+      }
+      this.filterType(value, 1);
     }
+
     if (e.target.name == "SupplierID") {
-      var a = this.state.SuppliersList.filter(function (e) {
-        return e.supplierID == value
-      });
+      if (value != 0) {
+        var a = this.state.SuppliersList.filter(function (e) {
+          return e.supplierID == value
+        });
 
-      this.setState({
-        SupplierName: a[0].supplierName,
-      })
+        this.setState({
+          SupplierName: a[0].supplierName,
+        })
+      } else {
+        this.setState({
+          SupplierName: "All",
+        })
+      }
+
+      this.filterType(value, 2);
     }
+  }
+
+  filterType = (value, type) => {
+    var key = this.state.search ? this.state.search : "null";
+    var link = API.filterItem + this.state.CategoryID + "/" + this.state.SupplierID + "/" + key;
+    if (type == 1) {
+      link = API.filterItem + value + "/" + this.state.SupplierID + "/" + key;
+    } else if (type == 2) {
+      link = API.filterItem + this.state.CategoryID + "/" + value + "/" + key;
+    }
+    console.log(link);
+    Axios.get(link).then(res => {
+      if (res.status === 200) {
+        if (res.data.success) {
+          this.setState({
+            Items: res.data.data
+          })
+        }
+      }
+    });
   }
 
   deleteDetail = (Size) => {
@@ -446,13 +483,15 @@ export default class Item extends Component {
           <div className="col-md-6 d-flex">
             <div className="form-group">
               <label htmlFor="ShowCategory">Category:</label>
-              <select className="form-control" id="ShowCategory" name="ShowCategory" onChange={this.handleChange} >
+              <select className="form-control" id="ShowCategory" name="CategoryID" onChange={this.handleChange} >
+                <option label="All">0</option>
                 {displayListCategories}
               </select>
             </div>
             <div className="form-group margin-left-20">
               <label htmlFor="showBranch">Branch:</label>
-              <select className="form-control" id="showBranch" name="showBranch" onChange={this.handleChange} >
+              <select className="form-control" id="showBranch" name="SupplierID" onChange={this.handleChange} >
+                <option label="All">0</option>
                 {displayListSuppliers}
               </select>
             </div>

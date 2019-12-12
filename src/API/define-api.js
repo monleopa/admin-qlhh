@@ -17,6 +17,7 @@ var API = {
   getShipper: APILink + "admin/shipper",
   processOrder: APILink + "admin/processorder",
   updateOrder: APILink + "admin/updateorder",
+  filterItem: APILink + "admin/item/",
   cancelorder: APILink + "order/cancel"
 }
 
